@@ -4,13 +4,6 @@
 #include "Config.h"
 #include <string>
 
-// 取消 e 宏定义
-#ifdef e
-#undef e
-#endif
-
-#include "include/stb_image/stb_image.h"
-
 extern int start_server(bool start);
 
 void MainWindow() 

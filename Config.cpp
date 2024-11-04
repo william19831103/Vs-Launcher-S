@@ -33,8 +33,9 @@ bool ConfigManager::LoadConfig() {
     
     std::string line;
     while (std::getline(file, line)) {
-        if (line.find("launcher_title=") == 0) {
-            sServerInfo->LauncherTitle = line.substr(14); // 14是"launcher_title="的长度
+        std::string value = ReadValue(line, "launcher_title");
+        if (!value.empty()) {
+            sServerInfo->LauncherTitle = value;
         }
     }
     
@@ -47,8 +48,12 @@ void ConfigManager::WriteValue(std::ofstream& file, const std::string& key, cons
 }
 
 std::string ConfigManager::ReadValue(const std::string& line, const std::string& key) {
-    if (line.find(key + "=") == 0) {
-        return Trim(line.substr(key.length() + 1));
+    size_t pos = line.find(key + "=");
+    if (pos == 0) {
+        size_t valueStart = key.length() + 1; // +1 是为了跳过等号
+        if (valueStart < line.length()) {
+            return Trim(line.substr(valueStart));
+        }
     }
     return "";
 }
