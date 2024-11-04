@@ -1,6 +1,8 @@
 #include "Auto.h"
 #include "ServerConnector.h"
 #include <thread>
+#include "Config.h"
+#include <string>
 
 // 取消 e 宏定义
 #ifdef e
@@ -9,25 +11,19 @@
 
 #include "include/stb_image/stb_image.h"
 
-
-
-extern int start_server(bool start) ;
+extern int start_server(bool start);
 
 void MainWindow() 
 {
     static bool open = true;
 
     if (open) {
-        // 设置窗口填满整个客户端区域
         ImGui::SetNextWindowPos(ImVec2(0, 0));
-        ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
-        
-        // 修改窗口标志
+        ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);         
+     
         ImGui::Begin("魔兽世界服务端", &open,
             ImGuiWindowFlags_NoResize |
-            //ImGuiWindowFlags_NoMove |
             ImGuiWindowFlags_NoCollapse |
-            //ImGuiWindowFlags_NoTitleBar |
             ImGuiWindowFlags_NoBringToFrontOnFocus |
             ImGuiWindowFlags_NoNavFocus
         );
@@ -37,19 +33,23 @@ void MainWindow()
         // 服务器配置区域
         ImGui::BeginGroup();
         {
-
             // 登录器端口
             ImGui::Text("登录器端口:");
             ImGui::SameLine();
             ImGui::PushItemWidth(100);
-            ImGui::InputInt("##LauncherPort", &sServerInfo->serverport, 0, 0);
+            if (ImGui::InputInt("##LauncherPort", &sServerInfo->serverport, 0, 0)) 
+            {
+                ConfigManager::SaveConfig();
+            }
             ImGui::PopItemWidth();
 
             // WOW服务器IP
             ImGui::Text("WOW服务器IP:");
             ImGui::SameLine();
             ImGui::PushItemWidth(100);
-            ImGui::InputText("##ServerIP", sServerInfo->MangosServerIP.data(), sServerInfo->MangosServerIP.size());
+            if (ImGui::InputText("##ServerIP", sServerInfo->MangosServerIP.data(), sServerInfo->MangosServerIP.size())) {
+                ConfigManager::SaveConfig();
+            }
             ImGui::PopItemWidth();
 
             // WOW服务器端口
@@ -66,8 +66,10 @@ void MainWindow()
             // 登录器标题
             ImGui::Text("登录器标题:");
             ImGui::SameLine();
-            ImGui::PushItemWidth(100);
-            ImGui::InputText("##ServerName", sServerInfo->LauncherTitle.data(), sServerInfo->LauncherTitle.size());
+            ImGui::PushItemWidth(200);
+            if (ImGui::InputText("##ServerName", sServerInfo->LauncherTitle.data(), sServerInfo->LauncherTitle.size())) {    
+                ConfigManager::SaveConfig();
+            }
             ImGui::PopItemWidth();
         }
         ImGui::EndGroup();
@@ -107,7 +109,7 @@ void MainWindow()
 
         // 显示服务器状态
         ImGui::SetCursorPos(ImVec2(padding, windowSize.y - buttonHeight - padding));
-        ImGui::Text("服务器状态: %s",sServerInfo->isLauncherConnected ? "运行中" : "已停止");
+        ImGui::Text("服务器状态: %s", sServerInfo->isLauncherConnected ? "运行中" : "已停止");
 
         ImGui::End();
     }

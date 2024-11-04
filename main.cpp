@@ -1,4 +1,6 @@
 #include "Auto.h"
+#include "Config.h"
+
 // Data
 ID3D11Device* g_pd3dDevice = nullptr;
 ID3D11DeviceContext* g_pd3dDeviceContext = nullptr;
@@ -21,6 +23,7 @@ int main(int, char**)
 {
     SetConsoleOutputCP(CP_UTF8); //控制台输出中文utf8编码
     SetConsoleCP(CP_UTF8); //控制台输入中文utf8编码
+
 
     // Create application window
     //ImGui_ImplWin32_EnableDpiAwareness();
@@ -55,6 +58,7 @@ int main(int, char**)
     //io.ConfigDockingTransparentPayload = true;
 
     ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\MSYH.TTC", 20.0f, nullptr, io.Fonts->GetGlyphRangesChineseFull());
+    //ImGui::GetIO().Fonts->AddFontFromFileTTF("c:\\windows\\fonts\\msyh.ttc", 20.0f, NULL,ImGui::GetIO().Fonts->GetGlyphRangesChineseSimplifiedCommon());
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
@@ -99,6 +103,9 @@ int main(int, char**)
 
     bool show_regesiter_window = true;
     ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+    // 加载配置
+    ConfigManager::LoadConfig();
 
     // Main loop
     bool done = false;
