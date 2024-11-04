@@ -17,6 +17,9 @@ void ConfigManager::SaveConfig() {
         new std::codecvt_utf8<wchar_t, 0x10ffff, std::generate_header>));
     
     file << "launcher_title=" << sServerInfo->LauncherTitle << std::endl;
+    file << "serverport=" << sServerInfo->serverport << std::endl;
+    file << "serverip=" << sServerInfo->MangosServerIP << std::endl;
+    file << "MangosServerPort=" << sServerInfo->MangosServerPort << std::endl;
     
     file.close();
 }
@@ -36,6 +39,18 @@ bool ConfigManager::LoadConfig() {
         std::string value = ReadValue(line, "launcher_title");
         if (!value.empty()) {
             sServerInfo->LauncherTitle = value;
+        }
+        value = ReadValue(line, "serverport");
+        if (!value.empty()) {
+            sServerInfo->serverport = std::stoi(value);
+        }
+        value = ReadValue(line, "serverip");
+        if (!value.empty()) {
+            sServerInfo->MangosServerIP = value;
+        }
+        value = ReadValue(line, "MangosServerPort");
+        if (!value.empty()) {
+            sServerInfo->MangosServerPort = std::stoi(value);
         }
     }
     
