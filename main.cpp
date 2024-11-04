@@ -51,7 +51,7 @@ int main(int, char**)
     io.ConfigViewportsNoAutoMerge = true;
     //io.ConfigViewportsNoTaskBarIcon = true;
     //io.ConfigViewportsNoDefaultParent = true;
-    //io.ConfigDockingAlwaysTabBar = true;
+    io.ConfigDockingAlwaysTabBar = true;
     //io.ConfigDockingTransparentPayload = true;
 
     ImFont* font = io.Fonts->AddFontFromFileTTF("c:\\Windows\\Fonts\\MSYH.TTC", 20.0f, nullptr, io.Fonts->GetGlyphRangesChineseFull());
