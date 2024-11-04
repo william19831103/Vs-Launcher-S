@@ -1,2 +1,2 @@
-# Vs-Launcher-S
-服务端
+# Vs-Launcher-C
+vscode 客户端
