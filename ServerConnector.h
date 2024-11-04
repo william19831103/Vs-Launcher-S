@@ -44,16 +44,20 @@ public:
         return &instance;
     }
 
+    //登录器端口
     int serverport = 34128;
+    //登录器标题
     std::string LauncherTitle = "XX魔兽";
+    //登录器通知
     std::string LauncherNotice = "欢迎来到游戏服务器！当前版本: 1.0.0";
     //登录器服务器是否连接
     bool isLauncherConnected = false;
     //mangos服务器是否连接
     bool isMangosServerConnected = false;
-
+    //mangos服务器IP
     std::string MangosServerIP = "127.0.0.1";
-    int MangosServerPort = 8085;
+    //mangos服务器端口
+    int MangosServerPort = 3724;
 
     // 加载通知
     void LoadNotice()
@@ -265,7 +269,13 @@ private:
 
     void handle_server_notice()
     {
-        send_response(SMSG_SERVER_NOTICE, sServerInfo->LauncherNotice);
+        std::string serverinfo;
+        serverinfo+=sServerInfo->LauncherTitle+"||";
+        serverinfo+=sServerInfo->MangosServerIP+"||";
+        serverinfo+=std::to_string(sServerInfo->MangosServerPort)+"||";
+        serverinfo+=sServerInfo->LauncherNotice;
+
+        send_response(SMSG_SERVER_NOTICE, serverinfo);
         do_read_header();
     }
 
