@@ -40,7 +40,15 @@ void MainWindow()
             ImGui::Text("WOW服务器IP:");
             ImGui::SameLine();
             ImGui::PushItemWidth(100);
-            if (ImGui::InputText("##ServerIP", sServerInfo->MangosServerIP.data(), sServerInfo->MangosServerIP.size())) {
+            static char bufferIP[256];
+            static bool bufferIPinitialized = false;
+            if (!bufferIPinitialized) {
+                strncpy(bufferIP, sServerInfo->MangosServerIP.c_str(), sizeof(bufferIP) - 1);
+                bufferIP[sizeof(bufferIP) - 1] = '\0';  // 确保字符串正确终止
+                bufferIPinitialized = true;
+            }
+            if (ImGui::InputText("##ServerIP", bufferIP, sizeof(bufferIP))) {
+                sServerInfo->MangosServerIP = bufferIP;
                 ConfigManager::SaveConfig();
             }
             ImGui::PopItemWidth();
