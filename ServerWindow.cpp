@@ -67,7 +67,16 @@ void MainWindow()
             ImGui::Text("登录器标题:");
             ImGui::SameLine();
             ImGui::PushItemWidth(200);
-            if (ImGui::InputText("##ServerName", sServerInfo->LauncherTitle.data(), sServerInfo->LauncherTitle.size())) {    
+            static char buffer[256];
+            static bool initialized = false;
+            if (!initialized) {
+                strncpy(buffer, sServerInfo->LauncherTitle.c_str(), sizeof(buffer) - 1);
+                buffer[sizeof(buffer) - 1] = '\0';  // 确保字符串正确终止
+                initialized = true;
+            }
+            if (ImGui::InputText("##ServerName", buffer, sizeof(buffer)))
+            {
+                sServerInfo->LauncherTitle = buffer;
                 ConfigManager::SaveConfig();
             }
             ImGui::PopItemWidth();
