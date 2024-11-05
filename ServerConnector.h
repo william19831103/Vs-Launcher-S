@@ -277,12 +277,12 @@ private:
     }
 
     void handle_server_notice()
-    {
+    {        
         std::string serverinfo;
         serverinfo+=sServerInfo->LauncherTitle+"||";
         serverinfo+=sServerInfo->MangosServerIP+"||";
         serverinfo+=std::to_string(sServerInfo->MangosServerPort)+"||";
-        serverinfo+=sServerInfo->LauncherNotice;
+        serverinfo+=sServerInfo->LauncherNotice;       
 
         send_response(SMSG_SERVER_NOTICE, serverinfo);
         do_read_header();
@@ -344,7 +344,7 @@ private:
 
     void handle_check_patch()
     {
-        fs::path data_dir = fs::current_path().parent_path() / "Data";
+        fs::path data_dir = fs::current_path() / "Data";
         std::vector<PatchFileInfo> patch_files;
 
         // 收集服务器端补丁文件信息
@@ -380,12 +380,12 @@ private:
         }
 
         std::string filename(data.begin(), data.end());
-        fs::path filepath = fs::current_path().parent_path() / "Data" / filename;
+        fs::path filepath = fs::current_path() / "Data" / filename;
 
         // 如果文件不存在，尝试查找不同大小写的版本
         if (!fs::exists(filepath))
         {
-            for (const auto &entry : fs::directory_iterator(fs::current_path().parent_path() / "Data"))
+            for (const auto &entry : fs::directory_iterator(fs::current_path() / "Data"))
             {
                 if (to_lower(entry.path().filename().string()) == to_lower(filename))
                 {
