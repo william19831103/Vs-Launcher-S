@@ -14,6 +14,14 @@ void ConfigManager::SaveConfig() {
     file << "serverport=" << sServerInfo->serverport << std::endl;
     file << "serverip=" << sServerInfo->MangosServerIP << std::endl;
     file << "MangosServerPort=" << sServerInfo->MangosServerPort << std::endl;
+    //SOAP服务器IP
+    file << "soapip=" << sServerInfo->soapIp << std::endl;
+    //SOAP服务器端口
+    file << "soapport=" << sServerInfo->soapPort << std::endl;
+    //SOAP用户名
+    file << "soapuser=" << sServerInfo->soapUser << std::endl;
+    //SOAP密码
+    file << "soappass=" << sServerInfo->soapPass << std::endl;
     
     file.close();
 }
@@ -42,6 +50,22 @@ bool ConfigManager::LoadConfig() {
         value = ReadValue(line, "MangosServerPort");
         if (!value.empty()) {
             sServerInfo->MangosServerPort = std::stoi(value);
+        }
+        value = ReadValue(line, "soapip");
+        if (!value.empty()) {
+            sServerInfo->soapIp = value;
+        }
+        value = ReadValue(line, "soapport");
+        if (!value.empty()) {
+            sServerInfo->soapPort = std::stoi(value);
+        }
+        value = ReadValue(line, "soapuser");
+        if (!value.empty()) {
+            sServerInfo->soapUser = value;
+        }
+        value = ReadValue(line, "soappass");
+        if (!value.empty()) {
+            sServerInfo->soapPass = value;
         }
     }
     

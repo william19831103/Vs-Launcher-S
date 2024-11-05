@@ -81,6 +81,69 @@ void MainWindow()
                 ConfigManager::SaveConfig();
             }
             ImGui::PopItemWidth();
+
+            // SOAP服务器IP
+            ImGui::Text("SOAP服务器IP:");
+            ImGui::SameLine();
+            ImGui::PushItemWidth(100);
+            static char bufferSoapIP[256];
+            static bool bufferSoapIPinitialized = false;
+            if (!bufferSoapIPinitialized) {
+                strncpy(bufferSoapIP, sServerInfo->soapIp.c_str(), sizeof(bufferSoapIP) - 1);
+                bufferSoapIP[sizeof(bufferSoapIP) - 1] = '\0';  // 确保字符串正确终止
+                bufferSoapIPinitialized = true;
+            }
+            if (ImGui::InputText("##SoapIP", bufferSoapIP, sizeof(bufferSoapIP))) {
+                sServerInfo->soapIp = bufferSoapIP;
+                ConfigManager::SaveConfig();
+            }
+            ImGui::PopItemWidth();
+
+            // SOAP服务器端口
+            ImGui::Text("SOAP端口号:");
+            ImGui::SameLine();
+            ImGui::PushItemWidth(100);
+            ImGui::InputInt("##SoapPort", &sServerInfo->soapPort, 0, 0);
+            ImGui::PopItemWidth();
+
+            // 确保端口号在有效范围内
+            if (sServerInfo->soapPort < 1) sServerInfo->soapPort = 1;
+            if (sServerInfo->soapPort > 65535) sServerInfo->soapPort = 65535;
+
+            // SOAP用户名
+            ImGui::Text("SOAP用户名:");
+            ImGui::SameLine();
+            ImGui::PushItemWidth(100);
+            static char bufferSoapUser[256];
+            static bool bufferSoapUserInitialized = false;
+            if (!bufferSoapUserInitialized) {
+                strncpy(bufferSoapUser, sServerInfo->soapUser.c_str(), sizeof(bufferSoapUser) - 1);
+                bufferSoapUser[sizeof(bufferSoapUser) - 1] = '\0';  // 确保字符串正确终止
+                bufferSoapUserInitialized = true;
+            }
+            if (ImGui::InputText("##SoapUser", bufferSoapUser, sizeof(bufferSoapUser))) {
+                sServerInfo->soapUser = bufferSoapUser;
+                ConfigManager::SaveConfig();
+            }
+            ImGui::PopItemWidth();
+
+            // SOAP密码
+            ImGui::Text("SOAP密码:");
+            ImGui::SameLine();
+            ImGui::PushItemWidth(100);
+            static char bufferSoapPass[256];
+            static bool bufferSoapPassInitialized = false;
+            if (!bufferSoapPassInitialized) {
+                strncpy(bufferSoapPass, sServerInfo->soapPass.c_str(), sizeof(bufferSoapPass) - 1);
+                bufferSoapPass[sizeof(bufferSoapPass) - 1] = '\0';  // 确保字符串正确终止
+                bufferSoapPassInitialized = true;
+            }
+            if (ImGui::InputText("##SoapPass", bufferSoapPass, sizeof(bufferSoapPass))) {
+                sServerInfo->soapPass = bufferSoapPass;
+                ConfigManager::SaveConfig();
+            }
+            ImGui::PopItemWidth();
+
         }
         ImGui::EndGroup();
 

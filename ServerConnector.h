@@ -30,6 +30,7 @@
 #include <fstream>
 #include "opcodes.h"
 #include <iostream>
+#include "soap/soap_client.cpp"
 
 namespace fs = std::filesystem;
 using asio::ip::tcp;
@@ -58,6 +59,14 @@ public:
     std::string MangosServerIP = "127.0.0.1";
     //mangos服务器端口
     int MangosServerPort = 3724;
+    //soap服务器IP
+    std::string soapIp="127.0.0.1";
+    //soap服务器端口
+    int soapPort=7878;
+    //soap用户名
+    std::string soapUser="1";
+    //soap密码
+    std::string soapPass="1";
 
     // 加载通知
     void LoadNotice()
@@ -281,9 +290,56 @@ private:
 
     void handle_register_account(const std::vector<char> &data)
     {
-        std::string account(data.begin(), data.end());
-        std::string result = "账号 " + account + " 注册成功！";
-        send_response(SMSG_REGISTER_RESULT, result);
+        std::string command(data.begin(), data.end());
+
+        // 解析账号、密码和安全码
+        size_t pos1 = command.find("||");
+        size_t pos2 = command.find("||", pos1 + 2);
+        
+        if (pos1 == std::string::npos || pos2 == std::string::npos) {
+            std::cout << "无效的注册数据格式" << std::endl;
+            send_response(SMSG_REGISTER_RESULT, "注册数据格式错误");
+            return;
+        }
+
+        std::string account = command.substr(0, pos1);
+        std::string password = command.substr(pos1 + 2, pos2 - pos1 - 2); 
+        std::string securityKey = command.substr(pos2 + 2);
+
+        // 验证账号密码长度
+        if (account.length() < 3 || password.length() >12) {
+            send_response(SMSG_REGISTER_RESULT, "账号长度至少4位,密码长度至少6位");
+            return;
+        }
+
+        // 验证账号密码是否包含非法字符
+        if (account.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789") != std::string::npos) {
+            send_response(SMSG_REGISTER_RESULT, "账号只能包含字母和数字");
+            return;
+        }
+
+        std::string response;
+        std::string regcommand = "account create " + account + " " + password+ " " + password;
+
+        try {
+            SoapClient client(sServerInfo->soapIp, sServerInfo->soapPort);
+            if (client.executeCommand(regcommand, response)) 
+            {
+                std::cout << "注册命令执行成功！\n响应内容：\n" << response << std::endl;
+                
+                if (response.find("Account created") != std::string::npos) {
+                    send_response(SMSG_REGISTER_RESULT, "账号注册成功!");
+                } else {
+                    send_response(SMSG_REGISTER_RESULT, response);
+                }
+            } else {
+                std::cout << "注册命令执行失败！" << std::endl;
+                send_response(SMSG_REGISTER_RESULT, "注册失败,请稍后重试");
+            }
+        } catch (const std::exception& e) {
+            std::cout << "注册异常: " << e.what() << std::endl;
+            send_response(SMSG_REGISTER_RESULT, "注册出现异常,请稍后重试");
+        }
     }
 
     void handle_check_patch()
